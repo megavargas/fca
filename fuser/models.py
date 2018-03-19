@@ -48,6 +48,7 @@ class FUser(AbstractUser):
     username = None
     email = models.EmailField('email address', unique=True)
     is_owner = models.BooleanField(default=False)
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='fusers', blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -63,4 +64,16 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to = 'avatars/', default = 'avatars/no-img.png')
     title = models.CharField(max_length=120, blank=True, null=True)
 
-    user = models.OneToOneField(FUser, related_name='profile')
+    user = models.OneToOneField(FUser, related_name='profile', on_delete=models.CASCADE)
+
+
+# Activation signal
+def check_domain(sender, user, request, **kwargs):
+    domain, created = Domain.objects.get_or_create(name=user.email.split('@')[1])
+    if created: user.is_owner = True
+    user.domain = domain()
+    user.save()
+
+from registration.signals import user_activated
+user_activated.connect(check_domain, dispatch_uid='registration.signals.user_activated')
+

@@ -18,4 +18,4 @@ echo "Creating super user"
 echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin@example.com', 'pass')" | python manage.py shell
 
 echo "Populate database"
-# python manage.py populate --development
+python manage.py initdb

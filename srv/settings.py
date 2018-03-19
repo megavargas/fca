@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fuser',
     'domain',
+    'client',
+    'opportunity',
+    'web'
 ]
 
 MIDDLEWARE = [
@@ -120,11 +123,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+# Users
 AUTH_USER_MODEL = 'fuser.FUser'
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
 REGISTRATION_OPEN = True
 REGISTRATION_FORM = 'fuser.forms.RegistrationFormNoFreeEmail'
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
