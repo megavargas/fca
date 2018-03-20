@@ -133,7 +133,7 @@ REGISTRATION_FORM = 'fuser.forms.RegistrationFormNoFreeEmail'
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-STATIC_URL = '/static/'
+STATIC_URL = '/statics/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "statics"),
 ]

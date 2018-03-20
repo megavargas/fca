@@ -71,7 +71,7 @@ class UserProfile(models.Model):
 def check_domain(sender, user, request, **kwargs):
     domain, created = Domain.objects.get_or_create(name=user.email.split('@')[1])
     if created: user.is_owner = True
-    user.domain = domain()
+    user.domain = domain
     user.save()
 
 from registration.signals import user_activated
