@@ -8,7 +8,7 @@ fake = Faker()
 
 from domain.models import Domain
 from client.models import Client, Manager
-from seller.models import Seller
+from agent.models import Agent
 from opportunity.models import Competitor, CompetitorOpportunity, Opportunity, Requirement, Requirement, ManagerOpportunity
 
 from django.core.management.base import BaseCommand
@@ -37,16 +37,16 @@ class Command(BaseCommand):
         domain.save()
         
         # Create owner
-        seller = Seller.objects.create_user(email='vargas@pass.com', password='pass')
-        seller.is_owner = True
-        seller.domain = domain
-        seller.save()
+        agent = Agent.objects.create_user(email='vargas@pass.com', password='pass')
+        agent.is_owner = True
+        agent.domain = domain
+        agent.save()
 
         # Create salesteam
         for i in range(random.randrange(12)):
-            seller = Seller.objects.create_user(email='salesman' + str(i) + '@pass.com', password='pass')
-            seller.domain = domain
-            seller.save()
+            agent = Agent.objects.create_user(email='salesman' + str(i) + '@pass.com', password='pass')
+            agent.domain = domain
+            agent.save()
         
         # Create clients
         for _ in range(random.randrange(1,24)):
@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
             cmp_count = random.randint(2,12)
             opportunity = Opportunity(          
-                seller = random.choice(Seller.objects.all()), \
+                agent = random.choice(Agent.objects.all()), \
                 client = random.choice(Client.objects.all()), \
                 created = datetime.datetime.now() - datetime.timedelta(days=random.randrange(12)), \
                 updated = datetime.datetime.now(), \

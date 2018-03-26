@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.core.mail import send_mail
 
 from django.views.generic.edit import FormView
-from seller.models import Seller
+from agent.models import Agent
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -21,7 +21,7 @@ class SalesManView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def test_func(self, user):
         salesman_name = self.request.get_full_path().split('/')[-1]
         salesman_email = salesman_name + '@' + user.domain.name
-        self.salesman = get_object_or_404(Seller, email=salesman_email)
+        self.salesman = get_object_or_404(Agent, email=salesman_email)
 
         return (user.is_owner or user==self.salesman) and self.salesman
 
@@ -51,7 +51,7 @@ class RemoveSalesman(FormView):
     success_url = reverse_lazy('domain:detail')
 
     def form_valid(self, form):
-        Seller.objects.get(id=form.cleaned_data['id']).delete()
+        Agent.objects.get(id=form.cleaned_data['id']).delete()
         messages.add_message(request.request, messages.INFO, 'Hello world.')
         return super().form_valid(form)
 

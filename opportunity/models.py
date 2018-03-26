@@ -1,6 +1,6 @@
 from django.db import models
 
-from seller.models import Seller
+from agent.models import Agent
 from client.models import Client, Manager
 
 class Opportunity(models.Model):
@@ -25,7 +25,7 @@ class Opportunity(models.Model):
         (MILESTONE_7,'Adjudicacion .Comunicación de la adjudicación ganada, perdida o  desierta.Evidencia: e-mail'),
     )
 
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='opportunities')
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='opportunities')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='opporunities')
 
     created = models.DateTimeField(auto_now_add=True)

@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'seller',
+    'agent',
     'domain',
     'client',
     'opportunity',
@@ -124,11 +124,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 # Users
-AUTH_USER_MODEL = 'seller.Seller'
+AUTH_USER_MODEL = 'agent.Agent'
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
 REGISTRATION_OPEN = True
-REGISTRATION_FORM = 'seller.forms.RegistrationFormNoFreeEmail'
+REGISTRATION_FORM = 'agent.forms.RegistrationFormNoFreeEmail'
+LOGIN_REDIRECT_URL = '/agent'
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
