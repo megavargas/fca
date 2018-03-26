@@ -1,6 +1,6 @@
 from django.db import models
 
-from fuser.models import FUser
+from seller.models import Seller
 from client.models import Client, Manager
 
 class Opportunity(models.Model):
@@ -25,7 +25,7 @@ class Opportunity(models.Model):
         (MILESTONE_7,'Adjudicacion .Comunicación de la adjudicación ganada, perdida o  desierta.Evidencia: e-mail'),
     )
 
-    fuser = models.ForeignKey(FUser, on_delete=models.CASCADE, related_name='opportunities')
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='opportunities')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='opporunities')
 
     created = models.DateTimeField(auto_now_add=True)

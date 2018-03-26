@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fuser',
+    'seller',
     'domain',
     'client',
     'opportunity',
@@ -124,11 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 # Users
-AUTH_USER_MODEL = 'fuser.FUser'
+AUTH_USER_MODEL = 'seller.Seller'
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
 REGISTRATION_OPEN = True
-REGISTRATION_FORM = 'fuser.forms.RegistrationFormNoFreeEmail'
+REGISTRATION_FORM = 'seller.forms.RegistrationFormNoFreeEmail'
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

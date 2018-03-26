@@ -6,39 +6,5 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ui container">
-        <div class="ui grid">
-
-            <div class="ui  computer large screen tablet only row" id="header"> <!-- Header -->
-                <div class="ui three item text menu">
-                    <a class="item" style="font-size:1.8em;"><i class="expand icon"></i>forecash</a>
-                    <a class="item" style="font-size:1.5em;"><i class="plus icon"></i>Add opportunity</a>
-                    <a class="item">
-                        <button class="ui grey circular icon button"><i class="user icon"></i></button>&nbsp;&nbsp;
-                        {% if user.is_owner %} <button class="ui grey circular icon button"><i class="building icon"></i></button>{% endif %}
-                    </a>
-                </div>             
-            </div>
-            <div class="ui mobile only row" id="header"> <!-- Header MOBILE -->
-                <div class="ui two item text menu">
-                        <a class="item" style="font-size:1.8em;"><i class="expand icon"></i>forecash</a>
-                        <a class="item">
-                        <button class="ui grey circular icon button"><i class="plus icon"></i></button>&nbsp;&nbsp;
-                        <button class="ui grey circular icon button"><i class="user icon"></i></button>&nbsp;&nbsp;
-                        {% if user.is_owner %} <button class="ui grey circular icon button"><i class="building icon"></i></button>{% endif %}
-                    </a>
-                </div>             
-            </div>            
-            <div class="ui row">
-                
-                {% block info %}
-                {% endblock info %}
-                    
-            </div>
-            <div class="ui row"> <!-- Footer -->
-                
-            </div>           
-        </div>
-    </div>    
 {% endblock content %}
     

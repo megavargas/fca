@@ -42,13 +42,13 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class FUser(AbstractUser):
+class Seller(AbstractUser):
     """User model"""
 
     username = None
     email = models.EmailField('email address', unique=True)
     is_owner = models.BooleanField(default=False)
-    domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='fusers', blank=True, null=True)
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='sellers', blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -64,7 +64,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to = 'avatars/', default = 'avatars/no-img.png')
     title = models.CharField(max_length=120, blank=True, null=True)
 
-    user = models.OneToOneField(FUser, related_name='profile', on_delete=models.CASCADE)
+    user = models.OneToOneField(Seller, related_name='profile', on_delete=models.CASCADE)
 
 
 # Activation signal

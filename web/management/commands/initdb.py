@@ -8,7 +8,7 @@ fake = Faker()
 
 from domain.models import Domain
 from client.models import Client, Manager
-from fuser.models import FUser
+from seller.models import Seller
 from opportunity.models import Competitor, CompetitorOpportunity, Opportunity, Requirement, Requirement, ManagerOpportunity
 
 from django.core.management.base import BaseCommand
@@ -37,16 +37,16 @@ class Command(BaseCommand):
         domain.save()
         
         # Create owner
-        fuser = FUser.objects.create_user(email='vargas@pass.com', password='pass')
-        fuser.is_owner = True
-        fuser.domain = domain
-        fuser.save()
+        seller = Seller.objects.create_user(email='vargas@pass.com', password='pass')
+        seller.is_owner = True
+        seller.domain = domain
+        seller.save()
 
         # Create salesteam
         for i in range(random.randrange(12)):
-            fuser = FUser.objects.create_user(email='salesman' + str(i) + '@pass.com', password='pass')
-            fuser.domain = domain
-            fuser.save()
+            seller = Seller.objects.create_user(email='salesman' + str(i) + '@pass.com', password='pass')
+            seller.domain = domain
+            seller.save()
         
         # Create clients
         for _ in range(random.randrange(1,24)):
@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
             cmp_count = random.randint(2,12)
             opportunity = Opportunity(          
-                fuser = random.choice(FUser.objects.all()), \
+                seller = random.choice(Seller.objects.all()), \
                 client = random.choice(Client.objects.all()), \
                 created = datetime.datetime.now() - datetime.timedelta(days=random.randrange(12)), \
                 updated = datetime.datetime.now(), \

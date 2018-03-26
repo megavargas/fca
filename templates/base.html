@@ -15,11 +15,16 @@
         {% block head %}{% endblock head %}
         
         {% block css %}{% endblock %}
+
     </head>
 
     <body>
+        
 
-        {% block content %}{% endblock %}
+        <div class="ui grid">
+            <div class="one wide teal center aligned column" style="min-width:5em;max-width:5em;"><i class="plus icon"></i></div>
+            <div class="fiveteen wide column">asdasda</div>
+        </div>
 
         <!-- Mainly scripts -->
         <script src="{% static 'vendor/node_modules/jquery/dist/jquery.min.js' %}"></script>
@@ -31,9 +36,6 @@
         <script>
             $(document).ready(function() {})
         </script>
-
-
-
     
     </body>
 
