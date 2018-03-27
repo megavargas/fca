@@ -10,6 +10,7 @@ from domain.models import Domain
 from client.models import Client, Manager
 from agent.models import Agent
 from opportunity.models import Competitor, CompetitorOpportunity, Opportunity, Requirement, Requirement, ManagerOpportunity
+from activity.models import Activity
 
 from django.core.management.base import BaseCommand
 
@@ -43,7 +44,7 @@ class Command(BaseCommand):
         agent.save()
 
         # Create salesteam
-        for i in range(random.randrange(12)):
+        for i in range(5):
             agent = Agent.objects.create_user(email='salesman' + str(i) + '@pass.com', password='pass')
             agent.domain = domain
             agent.save()
@@ -58,27 +59,36 @@ class Command(BaseCommand):
                 Manager(client = client, first_name = fake.first_name(), last_name = fake.last_name(), title = fake.job(), email = fake.free_email(), phone = fake.phone_number()).save()
 
         # Create competitors
-        for _ in range(random.randrange(24)):
+        for _ in range(1,random.randrange(24)):
             competitor = Competitor(name=fake.company())
             competitor.save()
 
         # Create opportunities
-        for _ in range(random.randrange(60)):
+        for _ in range(random.randrange(100)):
 
             cmp_count = random.randint(2,12)
-            opportunity = Opportunity(          
-                agent = random.choice(Agent.objects.all()), \
-                client = random.choice(Client.objects.all()), \
+
+            agent = random.choice(Agent.objects.all())
+            client = random.choice(Client.objects.all())
+
+            opportunity = Opportunity(
+                title = fake.sentence(nb_words=6), \
+                agent = agent, \
+                client = client, \
+                domain = domain, \
                 created = datetime.datetime.now() - datetime.timedelta(days=random.randrange(12)), \
                 updated = datetime.datetime.now(), \
                 deadline = datetime.datetime.now() + datetime.timedelta(days=random.randrange(12)), \
                 budget = 60000 + (random.randrange(60)*1000), \
                 margin = random.randrange(40)/100, \
+
                 # Relationship
                 rel_knowledge = random.choice([True,False]), \
+                
                 # Competitors
                 cmp_knowledge = random.choice([True,False]), \
                 cmp_count = cmp_count, \
+                
                 # Solution
                 sol_leader = random.choice([True,False]), \
                 sol_refs = random.choice([True,False]), \
@@ -89,6 +99,7 @@ class Command(BaseCommand):
 
             opportunity.save()
 
+            # Create competitors
             for _ in range(random.randrange(cmp_count)):
 
                 CompetitorOpportunity(
@@ -102,6 +113,7 @@ class Command(BaseCommand):
                     notes = fake.sentence(nb_words=26)
                 ).save()
 
+            # Create requirements
             for _ in range(random.randrange(6)):
 
                 Requirement(
@@ -110,6 +122,18 @@ class Command(BaseCommand):
                     fulfillment = random.choice(Requirement.FULLFILMENT)[0], \
                     notes = fake.sentence(nb_words=16)                  
                 ).save()
+            
+            # Create activities
+            for _ in range(random.randrange(12)):
+
+                Activity(
+                    agent = agent,
+                    client = client, 
+                    domain = domain,
+                    opportunity = opportunity,
+                    description = fake.sentence(nb_words=6), 
+                    icon = 'user'
+                ).save()                  
 
 
 

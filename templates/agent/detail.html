@@ -1,12 +1,72 @@
 {% extends "../base.html" %}
 {% load static %}
+{% load extra_tags %}
 
 {% block title %}{% endblock %}
 {% block head %}{% endblock head %}
 {% block css %}{% endblock %}
 
 {% block content %}
+<br><br>
 
+<div class="ui grid">
+
+    <div class="ui row">
+        <div class="ui eleven wide column">
+            <div class="ui grid">
+                <div class="ui horizontal divider header">Datos Personales</div>          
+                <div class="ui row">
+                    <div class="ui three wide column">
+                            <img  class="ui small image" src="http://via.placeholder.com/250x300">
+                    </div>
+                    <div class="ui thirteen wide column">
+                        <form class="ui form">
+            
+                            <div class="field">
+                                <div class="two fields">
+                                    <div class="field">
+                                        <input type="text" name="shipping[first-name]" placeholder="Nombre">
+                                    </div>
+                                    <div class="field">
+                                        <input type="text" name="shipping[last-name]" placeholder="Apellidos">
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <div class="field">
+                                <div class="fields">
+                                    <div class="twelve wide field">
+                                        <input type="text" name="shipping[address]" placeholder="Puesto">
+                                    </div>
+                                    <div class="four wide field">
+                                        <input type="text" name="shipping[address-2]" placeholder="Teléfono">
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <input type="submit" value="Actualizar" class="ui fluid basic button">
+            
+                        </form>                
+                    </div>  
+                </div>
+            </div>
+        </div>
+    
+        <div class="ui five wide column">
+            <div class="ui row">
+                <div class="ui grid">
+                    <div class="ui horizontal divider header">Estadísticas</div>
+                </div>
+            </div>
+        </div>  
+    </div>
+    <div class="ui row">
+        <div class="ui horizontal divider header">Forecast</div>
+        <div class="ui horizontal divider header">Oportunidades</div>          
+    </div>    
+         
+</div>
 {% endblock %}
 
 {% block js %}{% endblock %}
+

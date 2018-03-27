@@ -2,6 +2,8 @@ from django.db import models
 
 from agent.models import Agent
 from client.models import Client, Manager
+from domain.models import Domain
+from simple_history.models import HistoricalRecords
 
 class Opportunity(models.Model):
 
@@ -25,8 +27,11 @@ class Opportunity(models.Model):
         (MILESTONE_7,'Adjudicacion .Comunicación de la adjudicación ganada, perdida o  desierta.Evidencia: e-mail'),
     )
 
+    title = models.TextField()
+
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='opportunities')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='opporunities')
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='opporunities')
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -49,6 +54,10 @@ class Opportunity(models.Model):
     sol_quantify = models.BooleanField(default=False)
     sol_create_requirements = models.BooleanField(default=False)
     sol_negociation = models.BooleanField(default=False)
+
+    # History
+    history = HistoricalRecords()
+    
 
 
 class ManagerOpportunity(models.Model):
