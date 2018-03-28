@@ -10,6 +10,7 @@
     {% block head %}{% endblock head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'semantic/dist/semantic.min.css' %}">
+    <link rel="stylesheet" href="{% static 'node_modules/izitoast/dist/css/iziToast.min.css' %}">
     {% block css %}{% endblock %}
 
 </head>
@@ -38,8 +39,26 @@
 
     
 
-    <script src="{% static 'semantic/dist/semantic.min.js' %}"></script>
     <script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'semantic/dist/semantic.min.js' %}"></script>
+    <script src="{% static 'node_modules/izitoast/dist/js/iziToast.min.js' %}"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    iziToast.show({
+                        title: 'Info',
+                        message: '{{ message }}',
+                        color: 'green',
+                        position: 'topRight',
+                    });              
+                {% endfor %}
+            {% endif %} 
+        });               
+    </script>
+    
     {% block js %}{% endblock %}
 
 </body>

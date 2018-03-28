@@ -1,5 +1,14 @@
 from django import forms
 from registration.forms import RegistrationForm
+from django.forms import ModelForm
+
+from .models import AgentProfile
+
+
+class AgentUpdateForm(ModelForm):
+    class Meta:
+        model = AgentProfile
+        fields = ['phone','first_name','last_name','title']
 
 class RegistrationFormNoFreeEmail(RegistrationForm):
     """

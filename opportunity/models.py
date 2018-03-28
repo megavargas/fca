@@ -3,7 +3,11 @@ from django.db import models
 from agent.models import Agent
 from client.models import Client, Manager
 from domain.models import Domain
-from simple_history.models import HistoricalRecords
+
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+import datetime
 
 class Opportunity(models.Model):
 
@@ -15,30 +19,54 @@ class Opportunity(models.Model):
     MILESTONE_5 = 5
     MILESTONE_6 = 6
     MILESTONE_7 = 7
+    MILESTONE_8 = 8
 
     MILESTONES = (
-        (MILESTONE_0,'Homologación: Homologarse como proveedor. Este hito debe ser cubierto previo al hito 5 en cualquier momento. Evidencia : Correo electrónico.'),
-        (MILESTONE_1,'Necesidad admitida: El cliente admite el problema. Evidencia: correo electrónico.'),
-        (MILESTONE_2,'Posible solucionador de la necesidad reconocido por el cliente. Evidencia: Correo eletrónico'),
-        (MILESTONE_3,'Existencia de proyecto: Fecha  y presupuesto para satisfacer esa necesidad en la empresa.Evidencia:e-mail'),
-        (MILESTONE_4,'Invitado a la RFP. Dentro de la Short list de la invitacion a la RFP. Evidencia:e-mail'),
-        (MILESTONE_5,'Recepción de la RFP. Evidencia : e-mail'),
-        (MILESTONE_6,'Respuesta  a la RFP. Entrega de la oferta con la solución propuesta. Evidencia: e-mail'),
-        (MILESTONE_7,'Adjudicacion .Comunicación de la adjudicación ganada, perdida o  desierta.Evidencia: e-mail'),
+        (MILESTONE_0,'Posible Lead'),
+        (MILESTONE_1,'Homologación: Homologarse como proveedor. Este hito debe ser cubierto previo al hito 5 en cualquier momento. Evidencia : Correo electrónico.'),
+        (MILESTONE_2,'Necesidad admitida: El cliente admite el problema. Evidencia: correo electrónico.'),
+        (MILESTONE_3,'Posible solucionador de la necesidad reconocido por el cliente. Evidencia: Correo eletrónico'),
+        (MILESTONE_4,'Existencia de proyecto: Fecha  y presupuesto para satisfacer esa necesidad en la empresa.Evidencia:e-mail'),
+        (MILESTONE_5,'Invitado a la RFP. Dentro de la Short list de la invitacion a la RFP. Evidencia:e-mail'),
+        (MILESTONE_6,'Recepción de la RFP. Evidencia : e-mail'),
+        (MILESTONE_7,'Respuesta a la RFP. Entrega de la oferta con la solución propuesta. Evidencia: e-mail'),
+        (MILESTONE_8,'Adjudicacion .Comunicación de la adjudicación ganada, perdida o  desierta.Evidencia: e-mail'),
     )
+
+    WIN = 0
+    LOST = 1
+    CANCELED = 2
+    ACTIVE = 3
+
+    STATUS = (
+        (WIN, 'Ganada'),
+        (LOST, 'Perdida'),
+        (CANCELED, 'Cancelada'),
+        (ACTIVE, 'Activa'),
+    )
+
 
     title = models.TextField()
 
+    # Relationships
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='opportunities')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='opporunities')
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='opporunities')
 
+    # Timings
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     deadline = models.DateField()
 
+    # Economics
     budget = models.PositiveIntegerField(default=0)
     margin = models.FloatField(default=0)
+
+    # Status
+    status = models.PositiveIntegerField(choices=STATUS, default=4)
+
+    # Milestone
+    milestone = models.IntegerField(choices=MILESTONES, default=0)
 
     # Relationship
     rel_knowledge = models.BooleanField(default=False)
@@ -54,11 +82,24 @@ class Opportunity(models.Model):
     sol_quantify = models.BooleanField(default=False)
     sol_create_requirements = models.BooleanField(default=False)
     sol_negociation = models.BooleanField(default=False)
-
-    # History
-    history = HistoricalRecords()
     
 
+class Activity(models.Model):
+    agent = models.ForeignKey(Agent, on_delete = models.CASCADE, related_name='activities')
+    domain = models.ForeignKey(Domain, on_delete = models.CASCADE, related_name='activities')
+    opportunity = models.ForeignKey(Opportunity, on_delete = models.CASCADE, related_name='activities')
+    client = models.ForeignKey(Client, on_delete = models.CASCADE, related_name='activities')
+    icon = models.CharField(max_length=16)
+    created = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+
+
+class OpportunityHistory(models.Model):
+
+    opportunity = models.ForeignKey(Opportunity, on_delete = models.CASCADE, related_name='history')
+    date = models.DateField(auto_now_add=True)
+    value = models.PositiveIntegerField(default=0)
+    milestone = models.PositiveIntegerField(default=0)
 
 class ManagerOpportunity(models.Model):
 
@@ -149,3 +190,61 @@ class Requirement(models.Model):
     notes = models.TextField()
 
 
+@receiver(post_save, sender=Requirement)
+def register_requirement_update(sender, instance, **kwargs):
+
+    # Create activity update
+    agent = instance.opportunity.agent
+    domain = instance.opportunity.domain
+    opportunity = instance.opportunity
+    client = instance.opportunity.client
+    icon = 'user'
+    description = 'Requisito actualizado'
+    Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
+
+@receiver(post_save, sender=CompetitorOpportunity)
+def register_competitor_update(sender, instance, **kwargs):
+
+    # Create activity update
+    agent = instance.opportunity.agent
+    domain = instance.opportunity.domain
+    opportunity = instance.opportunity
+    client = instance.opportunity.client
+    icon = 'user'
+    description = 'Competidor actualizado: ' + instance.competitor.name
+    Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
+
+# Signals
+@receiver(post_save, sender=ManagerOpportunity)
+def register_manager_update(sender, instance, **kwargs):
+
+    # Create activity update
+    agent = instance.opportunity.agent
+    domain = instance.opportunity.domain
+    opportunity = instance.opportunity
+    client = instance.opportunity.client
+    icon = 'user'
+    description = 'Decisor actualizado: ' + instance.manager.email
+    Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
+
+# Signals
+@receiver(post_save, sender=Opportunity)
+def register_opportunity_history(sender, instance, **kwargs):
+
+    # Value calculation
+    status = 1 if instance.status in [0,3] else 0
+    value = (instance.milestone * (100/8)) * status
+    budget = instance.budget * value
+    defaults = {'value': value, 'milestone': instance.milestone}
+
+    # History record
+    OpportunityHistory.objects.update_or_create(date=datetime.date.today(), opportunity=instance, defaults=defaults)
+
+    # Create activity update
+    agent = instance.agent
+    domain = instance.domain
+    opportunity = instance
+    client = instance.client
+    icon = 'user'
+    description = 'Oportunidad actualizada'
+    Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()

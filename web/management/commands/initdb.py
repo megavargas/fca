@@ -10,7 +10,6 @@ from domain.models import Domain
 from client.models import Client, Manager
 from agent.models import Agent
 from opportunity.models import Competitor, CompetitorOpportunity, Opportunity, Requirement, Requirement, ManagerOpportunity
-from activity.models import Activity
 
 from django.core.management.base import BaseCommand
 
@@ -44,18 +43,18 @@ class Command(BaseCommand):
         agent.save()
 
         # Create salesteam
-        for i in range(5):
+        for i in range(1,5):
             agent = Agent.objects.create_user(email='salesman' + str(i) + '@pass.com', password='pass')
             agent.domain = domain
             agent.save()
         
         # Create clients
-        for _ in range(random.randrange(1,24)):
+        for _ in range(1,random.randrange(1,24)):
             client = Client(name=fake.company())
             client.save()
 
             # Create managers
-            for _ in range(random.randrange(12)):
+            for _ in range(1,random.randrange(12)):
                 Manager(client = client, first_name = fake.first_name(), last_name = fake.last_name(), title = fake.job(), email = fake.free_email(), phone = fake.phone_number()).save()
 
         # Create competitors
@@ -64,7 +63,7 @@ class Command(BaseCommand):
             competitor.save()
 
         # Create opportunities
-        for _ in range(random.randrange(100)):
+        for _ in range(1,random.randrange(100)):
 
             cmp_count = random.randint(2,12)
 
@@ -100,7 +99,7 @@ class Command(BaseCommand):
             opportunity.save()
 
             # Create competitors
-            for _ in range(random.randrange(cmp_count)):
+            for _ in range(1,random.randrange(cmp_count)):
 
                 CompetitorOpportunity(
                     competitor = random.choice(Competitor.objects.all()), \
@@ -114,25 +113,13 @@ class Command(BaseCommand):
                 ).save()
 
             # Create requirements
-            for _ in range(random.randrange(6)):
+            for _ in range(1,random.randrange(6)):
 
                 Requirement(
                     description = fake.sentence(nb_words=6), \
                     opportunity = opportunity, \
                     fulfillment = random.choice(Requirement.FULLFILMENT)[0], \
                     notes = fake.sentence(nb_words=16)                  
-                ).save()
-            
-            # Create activities
-            for _ in range(random.randrange(12)):
-
-                Activity(
-                    agent = agent,
-                    client = client, 
-                    domain = domain,
-                    opportunity = opportunity,
-                    description = fake.sentence(nb_words=6), 
-                    icon = 'user'
                 ).save()                  
 
 

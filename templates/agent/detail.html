@@ -20,15 +20,16 @@
                             <img  class="ui small image" src="http://via.placeholder.com/250x300">
                     </div>
                     <div class="ui thirteen wide column">
-                        <form class="ui form">
-            
+                        {% include '../form_errors.html' %}
+                        <form class="ui form" method="POST" action="{% url 'agent:update' email=object.email %}">
+                            {% csrf_token %}
                             <div class="field">
                                 <div class="two fields">
                                     <div class="field">
-                                        <input type="text" name="shipping[first-name]" placeholder="Nombre">
+                                        <input type="text" name="first_name" placeholder='Nombre' value="{{object.profile.first_name}}">
                                     </div>
                                     <div class="field">
-                                        <input type="text" name="shipping[last-name]" placeholder="Apellidos">
+                                        <input type="text" name="last_name" placeholder='Apellido' value="{{object.profile.last_name}}">
                                     </div>
                                 </div>
                             </div>
@@ -36,10 +37,10 @@
                             <div class="field">
                                 <div class="fields">
                                     <div class="twelve wide field">
-                                        <input type="text" name="shipping[address]" placeholder="Puesto">
+                                        <input type="text" name="title" placeholder='Cargo' value="{{object.profile.title}}">
                                     </div>
                                     <div class="four wide field">
-                                        <input type="text" name="shipping[address-2]" placeholder="Teléfono">
+                                        <input type="text" name="phone" placeholder='Teléfono' value="{{object.profile.phone}}">
                                     </div>
                                 </div>
                             </div>
@@ -62,11 +63,36 @@
     </div>
     <div class="ui row">
         <div class="ui horizontal divider header">Forecast</div>
-        <div class="ui horizontal divider header">Oportunidades</div>          
-    </div>    
+    </div>
+    <div class="ui row">
+        <div class="ui horizontal divider header">Detalles</div>
+
+        <div class="ui grey pointing detail four item menu">
+            <div class="item" data-tab="tab-oportunities">Oportunidades</div>
+            <div class="item" data-tab="tab-activities">Actividad</div>
+            <div class="item" data-tab="tab-clients">Clientes</div>
+            <div class="item" data-tab="tab-competitors">Competidores</div>
+        </div>
+    </div>
+    <div class="ui row">
+
+        <div class="ui tab" data-tab="tab-oportunities">a</div>
+        <div class="ui tab" data-tab="tab-activities">b</div>
+        <div class="ui tab" data-tab="tab-clients">c</div>
+        <div class="ui tab" data-tab="tab-competitors">s</div>
+        
+         
+    </div>
          
 </div>
 {% endblock %}
 
-{% block js %}{% endblock %}
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $('.detail.menu .item').tab();
+    });
+</script>
+
+{% endblock %}
 

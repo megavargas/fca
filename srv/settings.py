@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'domain',
     'client',
     'opportunity',
-    'activity',
     'web',
     'simple_history',
 ]

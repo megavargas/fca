@@ -1,0 +1,16 @@
+{% load i18n %}
+
+{% if form.errors %}
+<div class="ui negative message">
+  <i class="close icon"></i>
+  <div class="header">{% trans "Errors" %}</div>
+		{% for field in form %}
+			{% if field.errors %}
+				<strong>{{ field.name }}</strong> : {{ field.errors }}
+			{% endif %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+				{{ error }}
+		{% endfor %}
+</div>
+{% endif %}

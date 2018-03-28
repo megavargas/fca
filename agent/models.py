@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.urls import reverse
 
 from domain.models import Domain
 
@@ -18,7 +19,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
 
         # Create user profile
-        UserProfile(user = user).save()
+        AgentProfile(user = user).save()
 
         return user
 
@@ -56,16 +57,18 @@ class Agent(AbstractUser):
     objects = UserManager()
 
 
-class UserProfile(models.Model):
+class AgentProfile(models.Model):
 
     phone = models.CharField(max_length=60, blank=True, null=True)
-    firstname = models.CharField(max_length=60, blank=True, null=True)
-    lastname = models.CharField(max_length=60, blank=True, null=True)
+    first_name = models.CharField(max_length=60, blank=True, null=True)
+    last_name = models.CharField(max_length=60, blank=True, null=True)
     avatar = models.ImageField(upload_to = 'avatars/', default = 'avatars/no-img.png')
     title = models.CharField(max_length=120, blank=True, null=True)
 
     user = models.OneToOneField(Agent, related_name='profile', on_delete=models.CASCADE)
 
+    def get_absolute_url(self):
+        return reverse('agent:detail', kwargs={'email': self.user.email})
 
 # Activation signal
 def check_domain(sender, user, request, **kwargs):
