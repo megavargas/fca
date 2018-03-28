@@ -65,7 +65,7 @@ class Command(BaseCommand):
         # Create opportunities
         for _ in range(1,random.randrange(100)):
 
-            cmp_count = random.randint(2,12)
+            cmp_count = random.randint(6,12)
 
             agent = random.choice(Agent.objects.all())
             client = random.choice(Client.objects.all())

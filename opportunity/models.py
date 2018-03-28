@@ -23,14 +23,14 @@ class Opportunity(models.Model):
 
     MILESTONES = (
         (MILESTONE_0,'Posible Lead'),
-        (MILESTONE_1,'Homologación: Homologarse como proveedor. Este hito debe ser cubierto previo al hito 5 en cualquier momento. Evidencia : Correo electrónico.'),
-        (MILESTONE_2,'Necesidad admitida: El cliente admite el problema. Evidencia: correo electrónico.'),
-        (MILESTONE_3,'Posible solucionador de la necesidad reconocido por el cliente. Evidencia: Correo eletrónico'),
-        (MILESTONE_4,'Existencia de proyecto: Fecha  y presupuesto para satisfacer esa necesidad en la empresa.Evidencia:e-mail'),
-        (MILESTONE_5,'Invitado a la RFP. Dentro de la Short list de la invitacion a la RFP. Evidencia:e-mail'),
-        (MILESTONE_6,'Recepción de la RFP. Evidencia : e-mail'),
-        (MILESTONE_7,'Respuesta a la RFP. Entrega de la oferta con la solución propuesta. Evidencia: e-mail'),
-        (MILESTONE_8,'Adjudicacion .Comunicación de la adjudicación ganada, perdida o  desierta.Evidencia: e-mail'),
+        (MILESTONE_1,'Homologación'),
+        (MILESTONE_2,'Necesidad admitida'),
+        (MILESTONE_3,'Posible solucionador'),
+        (MILESTONE_4,'Existencia de proyecto'),
+        (MILESTONE_5,'Invitado a la RFP'),
+        (MILESTONE_6,'Recepción de la RFP'),
+        (MILESTONE_7,'Respuesta a la RFP'),
+        (MILESTONE_8,'Adjudicacion'),
     )
 
     WIN = 0
@@ -54,8 +54,8 @@ class Opportunity(models.Model):
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE, related_name='opporunities')
 
     # Timings
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateField(auto_now_add=True)
+    updated = models.DateField(auto_now=True)
     deadline = models.DateField()
 
     # Economics
@@ -63,7 +63,7 @@ class Opportunity(models.Model):
     margin = models.FloatField(default=0)
 
     # Status
-    status = models.PositiveIntegerField(choices=STATUS, default=4)
+    status = models.PositiveIntegerField(choices=STATUS, default=3)
 
     # Milestone
     milestone = models.IntegerField(choices=MILESTONES, default=0)
@@ -82,17 +82,49 @@ class Opportunity(models.Model):
     sol_quantify = models.BooleanField(default=False)
     sol_create_requirements = models.BooleanField(default=False)
     sol_negociation = models.BooleanField(default=False)
+
+    # Evaluation
+    value = models.PositiveIntegerField(default=0)
+
+    def get_history_values(self):
+
+        # Fix history
+        created = datetime.date.today() - datetime.timedelta(days=7)
+        today = datetime.date.today()
+
+        # History count
+        history = self.history.all()
+        count_days = (today - created).days
+        count_history = history.count()
+
+        # Fix needed
+        if not (count_days == count_history): 
+
+            fix_date = created
+            fix_value = history[0].value
+            fix_milestone = history[0].milestone
+
+            while fix_date <= today:
+
+                try: 
+                    record = OpportunityHistory.objects.get(opportunity=self, date=fix_date)
+                except: 
+                    record = OpportunityHistory(opportunity=self, date=fix_date, milestone=fix_milestone, value= fix_value)
+                    record.save()
+                    
+                fix_date = fix_date + datetime.timedelta(days=1)
+                fix_value = record.value
+                fix_milestone = record.milestone
+        
+        return [record.value for record in self.history.all()]
     
+    def save(self, *args, **kwargs):
 
-class Activity(models.Model):
-    agent = models.ForeignKey(Agent, on_delete = models.CASCADE, related_name='activities')
-    domain = models.ForeignKey(Domain, on_delete = models.CASCADE, related_name='activities')
-    opportunity = models.ForeignKey(Opportunity, on_delete = models.CASCADE, related_name='activities')
-    client = models.ForeignKey(Client, on_delete = models.CASCADE, related_name='activities')
-    icon = models.CharField(max_length=16)
-    created = models.DateTimeField(auto_now_add=True)
-    description = models.TextField()
+        status = 1 if self.status in [0,3] else 0
+        value = (self.milestone * (100/8)) * status
+        self.value = value
 
+        super(Opportunity,self).save(*args, **kwargs)
 
 class OpportunityHistory(models.Model):
 
@@ -101,6 +133,23 @@ class OpportunityHistory(models.Model):
     value = models.PositiveIntegerField(default=0)
     milestone = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ['-date']
+
+
+class Activity(models.Model):
+
+    agent = models.ForeignKey(Agent, on_delete = models.CASCADE, related_name='activities')
+    domain = models.ForeignKey(Domain, on_delete = models.CASCADE, related_name='activities')
+    opportunity = models.ForeignKey(Opportunity, on_delete = models.CASCADE, related_name='activities')
+    client = models.ForeignKey(Client, on_delete = models.CASCADE, related_name='activities')
+    icon = models.CharField(max_length=16)
+    created = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+
+    class Meta:
+        ordering = ['-created']
+        
 class ManagerOpportunity(models.Model):
 
     USER = 0
@@ -198,8 +247,11 @@ def register_requirement_update(sender, instance, **kwargs):
     domain = instance.opportunity.domain
     opportunity = instance.opportunity
     client = instance.opportunity.client
-    icon = 'user'
-    description = 'Requisito actualizado'
+
+    activities = Activity.objects.filter(agent=agent, domain=domain, opportunity=opportunity, client=client).count()
+    description = 'Requisito actualizado' if activities else 'Nueva requisito'
+    icon = 'user' if activities else 'plus'
+
     Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
 
 @receiver(post_save, sender=CompetitorOpportunity)
@@ -210,8 +262,11 @@ def register_competitor_update(sender, instance, **kwargs):
     domain = instance.opportunity.domain
     opportunity = instance.opportunity
     client = instance.opportunity.client
-    icon = 'user'
-    description = 'Competidor actualizado: ' + instance.competitor.name
+
+    activities = Activity.objects.filter(agent=agent, domain=domain, opportunity=opportunity, client=client).count()
+    description = 'Competidor actualizado' if activities else 'Nuevo competidor'
+    icon = 'user' if activities else 'plus'
+
     Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
 
 # Signals
@@ -223,21 +278,20 @@ def register_manager_update(sender, instance, **kwargs):
     domain = instance.opportunity.domain
     opportunity = instance.opportunity
     client = instance.opportunity.client
-    icon = 'user'
-    description = 'Decisor actualizado: ' + instance.manager.email
+
+    activities = Activity.objects.filter(agent=agent, domain=domain, opportunity=opportunity, client=client).count()
+    description = 'Decisor Actualizada' if activities else 'Nueva decisor'
+    icon = 'user' if activities else 'plus'
+
     Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
+
 
 # Signals
 @receiver(post_save, sender=Opportunity)
 def register_opportunity_history(sender, instance, **kwargs):
 
-    # Value calculation
-    status = 1 if instance.status in [0,3] else 0
-    value = (instance.milestone * (100/8)) * status
-    budget = instance.budget * value
-    defaults = {'value': value, 'milestone': instance.milestone}
-
     # History record
+    defaults = {'value': instance.value, 'milestone': instance.milestone}
     OpportunityHistory.objects.update_or_create(date=datetime.date.today(), opportunity=instance, defaults=defaults)
 
     # Create activity update
@@ -245,6 +299,12 @@ def register_opportunity_history(sender, instance, **kwargs):
     domain = instance.domain
     opportunity = instance
     client = instance.client
-    icon = 'user'
-    description = 'Oportunidad actualizada'
+    
+    activities = Activity.objects.filter(agent=agent, domain=domain, opportunity=opportunity, client=client).count()
+    description = 'Oportunidad actualizada' if activities else 'Nueva oportunidad'
+    icon = 'user' if activities else 'plus'
+
     Activity(agent=agent, domain=domain, opportunity=opportunity, client=client, icon=icon, description=description).save()
+
+
+            

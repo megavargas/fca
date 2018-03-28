@@ -4,6 +4,8 @@ from django.urls import reverse
 
 from domain.models import Domain
 
+import numpy 
+
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -55,6 +57,14 @@ class Agent(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    def get_history_values(self):
+
+        agent_oportunities = self.opportunities.all()
+        value_matrix = []
+        for opportunity in agent_oportunities:
+            value_matrix.append(opportunity.get_history_values(365))
+        return np.sum(value_matrix,axis=1).tolist()
 
 
 class AgentProfile(models.Model):

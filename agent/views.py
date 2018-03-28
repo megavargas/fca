@@ -5,6 +5,8 @@ from braces.views import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import Agent, AgentProfile
+from opportunity.models import Opportunity, OpportunityHistory
+import datetime
 
 class AgentRemoveActionView(DeleteView):
     pass
