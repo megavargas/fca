@@ -74,8 +74,61 @@
 
         <div class="ui active tab" data-tab="tab-oportunities">
 
-            {% if request.user.opportunities.count %}
-                <table class="ui very basic striped table">
+            <div class="ui segment" style="margin-top:2em; margin-bottom:3em;">
+                <form class="ui form">
+                    {% csrf_token %}
+                    <div class="four fields">
+
+                        <div class="field">
+                            <label>Cliente</label>
+                            <select multiple="" class="ui dropdown" name="clients">
+                                <option value="">Todos</option>
+                                {% for client in clients %}
+                                <option value="{{client.id}}">{{client.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>Estado</label>
+                            <select multiple="" class="ui dropdown" name="status">
+                                <option value="">Todos</option>
+                                {% for stt in status %}
+                                <option value="{{stt.0}}">{{stt.1}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>Hito</label>
+                            <select multiple="" class="ui dropdown" name="milestones">
+                                <option value="">Todos</option>
+                                {% for mil in milestones %}
+                                <option value="{{mil.0}}">{{mil.1}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="field">
+                            <label>Fecha de cierre</label>
+                            <select class="ui dropdown" name="timings">
+                                <option value="">Cualquier fecha</option>
+                                <option value="1">Esta semana</option>
+                                <option value="2">Este mes</option>
+                                <option value="3">Este trimestre</option>
+                                <option value="4">Este año</option>
+                                
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="field">
+                        <input type="submit" class="ui fluid basic button" value="Aplicar filtros">
+                    </div>
+                </form>
+            </div>
+
+                <table class="ui very basic table">
                     <thead>
                         <tr>
                             <th class="two wide">Cliente</th>
@@ -83,6 +136,7 @@
                             <th class="one wide">Presupuesto</th>
                             <th class="two wide">Creado</th>
                             <th class="two wide">Última actualización</th>
+                            <th class="two wide">Fecha de cierre</th>
                             <th class="one wide">Estado</th>
                             <th class="two wide">Hito</th>
                             <th class="one wide">Probabilidad</th>
@@ -91,13 +145,14 @@
                     </thead>
                     <tbody>
                         
-                        {% for opportunity in request.user.opportunities.all  %}
+                        {% for opportunity in opportunities  %}
                         <tr>
                             <td>{{opportunity.client.name}}</td>
                             <td>{{opportunity.title}}</td>
                             <td>{{opportunity.budget}} €</td>
                             <td>{{opportunity.created}}</td>
                             <td>{{opportunity.updated}}</td>
+                            <td>{{opportunity.deadline}}</td>
                             <td>{{opportunity.get_status_display}}</td>
                             <td>{{opportunity.get_milestone_display}}</td>
                             <td>{{opportunity.value}} %</td>
@@ -110,9 +165,6 @@
                             
                     </tbody>
                 </table>                
-            {% else %}
-                <h2>No tienes oportunidades</h2>
-            {% endif %}
 
         </div>
         <div class="ui tab" data-tab="tab-activities">b</div>
@@ -128,9 +180,8 @@
 {% block js %}
 <script>
     $(document).ready(function() {
+
         $('.detail.menu .item').tab();
-
-
 
         var sparklineStyle = {
             responsive: false,
@@ -163,7 +214,10 @@
             }
           }
           
-          
+        $('.table').tablesort()
+
+        $('.dropdown').dropdown({
+          });
           
         $('.sparkline').each(function() {
 

@@ -12,6 +12,7 @@
     "chart.js": "^2.7.2",
     "izitoast": "^1.2.0",
     "jquery": "^3.3.1",
+    "jquery-tablesort": "0.0.11",
     "semantic-ui": "^2.3.1"
   }
 }

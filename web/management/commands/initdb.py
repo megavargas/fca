@@ -75,11 +75,11 @@ class Command(BaseCommand):
                 agent = agent, \
                 client = client, \
                 domain = domain, \
-                created = datetime.datetime.now() - datetime.timedelta(days=random.randrange(12)), \
-                updated = datetime.datetime.now(), \
-                deadline = datetime.datetime.now() + datetime.timedelta(days=random.randrange(12)), \
+
+                deadline = datetime.datetime.now() + datetime.timedelta(days=random.randrange(100,120)), \
                 budget = 60000 + (random.randrange(60)*1000), \
                 margin = random.randrange(40)/100, \
+                milestone = random.choice(Opportunity.MILESTONES)[0], \
 
                 # Relationship
                 rel_knowledge = random.choice([True,False]), \
@@ -94,7 +94,7 @@ class Command(BaseCommand):
                 sol_understanding = random.choice([True,False]), \
                 sol_quantify = random.choice([True,False]), \
                 sol_create_requirements = random.choice([True,False]), \
-                sol_negociation = random.choice([True,False]))
+                sol_negociation = random.choice([True,False]))                
 
             opportunity.save()
 
