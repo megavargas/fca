@@ -25,10 +25,10 @@
                             <div class="field">
                                 <div class="two fields">
                                     <div class="field">
-                                        <input type="text" name="first_name" placeholder='Nombre' value="{{object.profile.first_name}}">
+                                        <input type="text" name="first_name" placeholder='Nombre' value="{{object.profile.first_name|cleanone}}">
                                     </div>
                                     <div class="field">
-                                        <input type="text" name="last_name" placeholder='Apellido' value="{{object.profile.last_name}}">
+                                        <input type="text" name="last_name" placeholder='Apellido' value="{{object.profile.last_name|cleanone}}">
                                     </div>
                                 </div>
                             </div>
@@ -36,10 +36,10 @@
                             <div class="field">
                                 <div class="fields">
                                     <div class="twelve wide field">
-                                        <input type="text" name="title" placeholder='Cargo' value="{{object.profile.title}}">
+                                        <input type="text" name="title" placeholder='Cargo' value="{{object.profile.title|cleanone}}">
                                     </div>
                                     <div class="four wide field">
-                                        <input type="text" name="phone" placeholder='Teléfono' value="{{object.profile.phone}}">
+                                        <input type="text" name="phone" placeholder='Teléfono' value="{{object.profile.phone|cleanone}}">
                                     </div>
                                 </div>
                             </div>
@@ -130,15 +130,7 @@
     $(document).ready(function() {
         $('.detail.menu .item').tab();
 
-        var data = {
-            labels : ["January","February","March","April","May","June","July"],
-            datasets : [
-                {
-                    strokeColor : "rgba(151,187,205,1)",
-                    data : [28,48,40,19,96,27,100]
-                }
-            ]
-        }
+
 
         var sparklineStyle = {
             responsive: false,

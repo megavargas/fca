@@ -11,6 +11,6 @@ def default(value, arg):
 def limited(value, arg):
     return value[:arg]
 
-@register.filter(name='chart')
-def chart(opportunity, arg):
-    return str([record.value for record in opportunity.history.all()][arg:])
+@register.filter(name='cleanone')
+def cleanone(value):
+    return value if value else ""
