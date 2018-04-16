@@ -89,5 +89,6 @@ class AgentDetailView(LoginRequiredMixin, DetailView):
                 opportunities = opportunities.filter(deadline__gte=this_year_start).filter(deadline__lte=this_year_end)
         
         context['opportunities'] = opportunities
+        context['activities'] = Opportunity.objects.filter(agent=agent)[:100]
 
         return context

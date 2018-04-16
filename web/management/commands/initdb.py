@@ -9,7 +9,7 @@ fake = Faker()
 from domain.models import Domain
 from client.models import Client, Manager
 from agent.models import Agent
-from opportunity.models import Competitor, CompetitorOpportunity, Opportunity, Requirement, Requirement, ManagerOpportunity
+from opportunity.models import Competitor, CompetitorOpportunity, Opportunity, Requirement, Requirement, ManagerOpportunity, Activity
 
 from django.core.management.base import BaseCommand
 
@@ -97,6 +97,10 @@ class Command(BaseCommand):
                 sol_negociation = random.choice([True,False]))                
 
             opportunity.save()
+
+            for _ in range(1,random.randrange(cmp_count)):
+                Activity()
+
 
             # Create competitors
             for _ in range(1,random.randrange(cmp_count)):

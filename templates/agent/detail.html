@@ -169,7 +169,55 @@
                 </table>                
 
         </div>
-        <div class="ui tab" data-tab="tab-activities">b</div>
+
+
+
+
+        <!-- ACTIVIDADES -->
+        <div class="ui tab" data-tab="tab-activities">
+
+            <table class="ui very basic table">
+                <thead>
+                    <tr>
+                        <th class="two wide">Cliente</th>
+                        <th class="four wide">Oportunidad</th>
+                        <th class="two wide">Fecha</th>
+                        <th class="ten wide">Descripción</th>                           
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for activity in activities  %}
+                    <tr>
+                        <td>{{activity.client.name}}</td>
+                        <td>{{activity.title}}</td>
+                        <td>{{activity.created}}</td>
+                        <td>{{activity.description}}</td>
+
+                    </tr>                            
+                    {% endfor %}
+                        
+                </tbody>
+            </table> 
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="ui tab" data-tab="tab-clients">c</div>
         <div class="ui tab" data-tab="tab-competitors">s</div>
         
