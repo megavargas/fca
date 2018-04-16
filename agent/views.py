@@ -54,7 +54,7 @@ class AgentDetailView(LoginRequiredMixin, DetailView):
 
         # Actual filtering
         opportunities = agent.opportunities.all()
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
 
         # Filter by client
         if 'clients' in self.request.GET.keys():
