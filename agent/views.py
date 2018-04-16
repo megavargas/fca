@@ -6,7 +6,7 @@ from braces.views import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import Agent, AgentProfile
-from opportunity.models import Opportunity, OpportunityHistory
+from opportunity.models import Opportunity, OpportunityHistory, Activity
 
 import datetime
 
@@ -89,6 +89,7 @@ class AgentDetailView(LoginRequiredMixin, DetailView):
                 opportunities = opportunities.filter(deadline__gte=this_year_start).filter(deadline__lte=this_year_end)
         
         context['opportunities'] = opportunities
-        context['activities'] = Opportunity.objects.filter(agent=agent)[:100]
+        context['activities'] = Activity.objects.filter(agent=agent)[:100]
+        context['forecash'] = agent.get_actual_forecash()
 
         return context

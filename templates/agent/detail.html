@@ -1,6 +1,7 @@
 {% extends "../base.html" %}
 {% load static %}
 {% load extra_tags %}
+{% load humanize %}
 
 {% block title %}{% endblock %}
 {% block head %}{% endblock head %}
@@ -52,22 +53,19 @@
             </div>
         </div>
     
-        <div class="ui five wide column">
-            <div class="ui row">
-                <div class="ui grid">
-                </div>
-            </div>
+        <div class="ui five wide center aligned column">
+            <p style="padding-top:1em;color:gray;font-size:1.3em;">forecash</p>
+            <p style="margin-top:-0.5em;color:orange;font-size:4em;">{{forecash|intcomma:2}} €</p>
         </div>  
+
     </div>
     <div class="ui row">
     </div>
     <div class="ui row">
 
-        <div class="ui secondary pointing detail four item menu">
+        <div class="ui secondary pointing detail two item menu">
             <div class="active item" data-tab="tab-oportunities">Oportunidades</div>
             <div class="item" data-tab="tab-activities">Actividad</div>
-            <div class="item" data-tab="tab-clients">Clientes</div>
-            <div class="item" data-tab="tab-competitors">Competidores</div>
         </div>
     </div>
     <div class="ui row">
@@ -170,9 +168,6 @@
 
         </div>
 
-
-
-
         <!-- ACTIVIDADES -->
         <div class="ui tab" data-tab="tab-activities">
 
@@ -187,13 +182,12 @@
                 </thead>
                 <tbody>
                     
-                    {% for activity in activities  %}
+                    {% for activity in activities %}
                     <tr>
                         <td>{{activity.client.name}}</td>
-                        <td>{{activity.title}}</td>
+                        <td>{{activity.opportunity.title}}</td>
                         <td>{{activity.created}}</td>
                         <td>{{activity.description}}</td>
-
                     </tr>                            
                     {% endfor %}
                         
@@ -201,25 +195,6 @@
             </table> 
 
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <div class="ui tab" data-tab="tab-clients">c</div>
-        <div class="ui tab" data-tab="tab-competitors">s</div>
         
          
     </div>

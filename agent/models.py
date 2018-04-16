@@ -65,6 +65,9 @@ class Agent(AbstractUser):
         for opportunity in agent_oportunities:
             value_matrix.append(opportunity.get_history_values())
         return np.sum(value_matrix,axis=0)
+    
+    def get_actual_forecash(self):
+        return np.sum([((opportunity.value/100) * opportunity.budget) for opportunity in self.opportunities.all()])
 
 
 class AgentProfile(models.Model):
